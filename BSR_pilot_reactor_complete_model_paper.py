@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[102]:
+# In[1]:
 
 
 import matplotlib.pyplot as plt
@@ -17,7 +17,7 @@ from IPython.display import clear_output
 import seaborn as sns 
 
 
-# In[103]:
+# In[2]:
 
 
 def k_esp (A, E, R, T):
@@ -25,7 +25,7 @@ def k_esp (A, E, R, T):
     return k
 
 
-# In[104]:
+# In[3]:
 
 
 def cp(A, B, C, D, T):
@@ -33,7 +33,7 @@ def cp(A, B, C, D, T):
     return cap_cal # J/µmol.K
 
 
-# In[105]:
+# In[4]:
 
 
 params = [
@@ -45,7 +45,7 @@ params = [
 ]
 
 
-# In[106]:
+# In[5]:
 
 
 R = 8.314 # J/mol.K
@@ -156,16 +156,16 @@ def odes(W, Y, T_a, D, U, Dp, eff_SRM, eff_WGS):
     return [dF_H2O_dW, dF_CO2_dW, dF_H2_dW, df_N2_dW, dF_CH4_dW, dF_CO_dW, dT_dW, dP_dW]
 
 
-# In[107]:
+# In[6]:
 
 
 n_tubes = 60
-F_CH4_e = 0.1276 # mol/s
-F_CO2_e = 0.0851 # mol/s
-F_H2O_e = 2*F_CH4_e # mol/s
-F_CH4_e = F_CH4_e/n_tubes # mol/s
-F_CO2_e = F_CO2_e/n_tubes # mol/s
-F_H2O_e = F_H2O_e/n_tubes # mol/s
+F_CH4_in = 0.1276 # mol/s
+F_CO2_in = 0.0851 # mol/s
+F_H2O_in = 2*F_CH4_in # mol/s
+F_CH4_in = F_CH4_in/n_tubes # mol/s
+F_CO2_in = F_CO2_in/n_tubes # mol/s
+F_H2O_in = F_H2O_in/n_tubes # mol/s
 F_N2_e = 0
 F_H2_e = 0
 F_CO_e = 0
@@ -178,19 +178,19 @@ P0 = 5.6e5 # Pa
 bed_porosity = (0.9198/((D_our/Dp)**2)) + 0.3414
 cat_dens = 2530 # kg/m³
 bed_packing = (1-bed_porosity)*cat_dens
-Y0 = np.array([F_H2O_e, F_CO2_e, F_H2_e,  F_N2_e, F_CH4_e, F_CO_e, T_K, P0])
+Y0 = np.array([F_H2O_in, F_CO2_in, F_H2_e,  F_N2_e, F_CH4_in, F_CO_e, T_K, P0])
 
 mass_cat = 200 # kg
 mass_cat = mass_cat/n_tubes # kg
 
 
-# In[108]:
+# In[7]:
 
 
 bed_packing
 
 
-# In[109]:
+# In[8]:
 
 
 t_span = [0, mass_cat]
@@ -213,9 +213,9 @@ T = sol.y[6]
 Pressure = sol.y[7]
 T_out_C = T - 273
 
-X_CH4 = (F_CH4_e - F_CH4)/F_CH4_e
-X_CO2 = (F_CO2_e - F_CO2)/F_CO2_e
-X_H2O = (F_H2O_e - F_H2O)/F_H2O_e
+X_CH4 = (F_CH4_in - F_CH4)/F_CH4_in
+X_CO2 = (F_CO2_in - F_CO2)/F_CO2_in
+X_H2O = (F_H2O_in - F_H2O)/F_H2O_in
 # print(X_CH4, X_CO2, X_H2O)
 
 X_CH4 = (F_CH4[0] - F_CH4)/F_CH4[0]
@@ -244,11 +244,11 @@ for i in range(len(X_CH4)):
                 Dp, eff_SRM:= 0.03, eff_WGS:= 0.07),
                 method = 'BDF'
                )
-    X_CH4_eq.append((F_CH4_e - sol_eq.y[4][-1])/F_CH4_e)
-    X_CO2_eq.append((F_CO2_e - sol_eq.y[1][-1])/F_CO2_e)
-    X_H2O_eq.append((F_H2O_e - sol_eq.y[0][-1])/F_H2O_e)
-    X_C_eq.append(((F_CH4_e + F_CO2_e) - (sol_eq.y[4][-1] + sol_eq.y[1][-1]))/
-        (F_CH4_e + F_CO2_e))
+    X_CH4_eq.append((F_CH4_in - sol_eq.y[4][-1])/F_CH4_in)
+    X_CO2_eq.append((F_CO2_in - sol_eq.y[1][-1])/F_CO2_in)
+    X_H2O_eq.append((F_H2O_in - sol_eq.y[0][-1])/F_H2O_in)
+    X_C_eq.append(((F_CH4_in + F_CO2_in) - (sol_eq.y[4][-1] + sol_eq.y[1][-1]))/
+        (F_CH4_in + F_CO2_in))
 ### end equilibrium calculation
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -256,21 +256,21 @@ plt.grid(which='both')
 plt.ylabel('$X$')
 plt.ylim((-0.25,1.01))
 ax.plot(W_kg, X_CH4, linestyle = 'none')
-ax.set_xlabel('$W_{tube}$ (kg)')
+ax.set_xlabel(r'$W_{\mathrm{tube}}$ (kg)')
 ax2 = ax.twiny()
-ax2.plot(W_T_kg, X_CH4, color = 'red', label = '$X_{CH_4}$')
-ax2.plot(W_T_kg, X_CH4_eq, color = 'red', linestyle = 'dashed', label = '$X_{CH_4, eq}$')
+ax2.plot(W_T_kg, X_CH4, color = 'red', label = r'$X_{\mathrm{CH_4}}$')
+ax2.plot(W_T_kg, X_CH4_eq, color = 'red', linestyle = 'dashed', label = r'$X_{\mathrm{CH_4, eq}}$')
 
-ax2.plot(W_T_kg, X_H2O, color = 'blue', label = '$X_{H_2O}$')
-ax2.plot(W_T_kg, X_H2O_eq, color = 'blue', linestyle = 'dashed', label = '$X_{H_2O, eq}$')
+ax2.plot(W_T_kg, X_H2O, color = 'blue', label = r'$X_{\mathrm{H_2O}}$')
+ax2.plot(W_T_kg, X_H2O_eq, color = 'blue', linestyle = 'dashed', label = r'$X_{\mathrm{H_2O, eq}}$')
 
-ax2.plot(W_T_kg, X_CO2, color = 'green', label = '$X_{CO_2}$')
-ax2.plot(W_T_kg, X_CO2_eq, color = 'green', linestyle = 'dashed', label = '$X_{CO_2, eq}$')
+ax2.plot(W_T_kg, X_CO2, color = 'green', label = r'$X_{\mathrm{CO_2}}$')
+ax2.plot(W_T_kg, X_CO2_eq, color = 'green', linestyle = 'dashed', label = r'$X_{\mathrm{CO_2, eq}}$')
 
-ax2.plot(W_T_kg, X_C, color = 'black', label = '$X_{C}$')
-ax2.plot(W_T_kg, X_C_eq, color = 'black', linestyle = 'dashed', label = '$X_{C, eq}$')
+ax2.plot(W_T_kg, X_C, color = 'black', label = r'$X_{\mathrm{C}}$')
+ax2.plot(W_T_kg, X_C_eq, color = 'black', linestyle = 'dashed', label = r'$X_{\mathrm{C, eq}}$')
 plt.legend(bbox_to_anchor=(1.15, -0.25), ncols = 3)
-ax2.set_xlabel('$W_{total}$ (kg)')
+ax2.set_xlabel(r'$W_{\mathrm{total}}$ (kg)')
 # plt.xlim(0,max(W_kg)*1.3)
 fig_name = 'figure_W_vs_X.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
@@ -278,12 +278,12 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 H2_CO = F_H2/F_CO
 fig, ax = plt.subplots(figsize=(3,2.5))
 plt.grid(which='both')
-plt.ylabel('$H_2/CO$')
+plt.ylabel(r'$\mathrm{H_2/CO}$')
 ax.plot(W_kg, H2_CO, linestyle = 'none')
-ax.set_xlabel('$W_{tube}$ (kg)')
+ax.set_xlabel(r'$W_{\mathrm{tube}}$ (kg)')
 ax2 = ax.twiny()
 ax2.plot(W_T_kg, H2_CO, color = 'b')
-ax2.set_xlabel('$W_{total}$ (kg)')
+ax2.set_xlabel(r'$W_{\mathrm{total}}$ (kg)')
 plt.ylim(0, None)
 fig_name = 'figure_W_vs_H2_CO.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
@@ -293,7 +293,7 @@ W_T_kg_extrinsic = W_T_kg
 T_out_C_extrinsic = T_out_C
 # fig, axT = plt.subplots(figsize=(3,2.5))
 # plt.plot(W_T_kg, T_out_C, label = 'Extrínseco')
-# plt.xlabel('$W_{total}$ (kg)')
+# plt.xlabel(r'$W_{\mathrm{total}}$ (kg)')
 # plt.ylabel('$T$ (ºC)')
 # plt.grid(which='both')
 # plt.ylim(640,810)
@@ -303,7 +303,7 @@ T_out_C_extrinsic = T_out_C
 
 fig, ax = plt.subplots(figsize=(3,2.5))
 plt.plot(W_T_kg, Pressure)
-plt.xlabel('$W_{total}$ (kg)')
+plt.xlabel(r'$W_{\mathrm{total}}$ (kg)')
 plt.ylabel('$P$ (Pa)')
 plt.grid('both')
 plt.ticklabel_format(useOffset=False)
@@ -313,7 +313,7 @@ fig_name = 'figure_W_vs_P.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[110]:
+# In[9]:
 
 
 z = [4*(W)/(np.pi*((D_our)**2)*bed_packing) for W in W_kg]
@@ -322,31 +322,31 @@ z_80kg = z[i[-1]]
 z_80kg
 
 
-# In[111]:
+# In[10]:
 
 
 X_CH4[i[-1]]
 
 
-# In[112]:
+# In[11]:
 
 
 X_CO2[i[-1]]
 
 
-# In[113]:
+# In[12]:
 
 
 X_H2O[i[-1]]
 
 
-# In[114]:
+# In[13]:
 
 
 H2_CO[i[-1]]
 
 
-# In[115]:
+# In[14]:
 
 
 T_out_C[i[-1]]
@@ -358,61 +358,61 @@ T_out_C[i[-1]]
 
 
 
-# In[116]:
+# In[15]:
 
 
 F_CH4[0]*60
 
 
-# In[117]:
+# In[16]:
 
 
 F_CH4[-1]*60
 
 
-# In[118]:
+# In[17]:
 
 
 F_CO[-1]*60
 
 
-# In[119]:
+# In[18]:
 
 
 F_H2[-1]*60
 
 
-# In[120]:
+# In[19]:
 
 
 X_CH4[-1]
 
 
-# In[121]:
+# In[20]:
 
 
 X_CO2[-1]
 
 
-# In[122]:
+# In[21]:
 
 
 X_H2O[-1]
 
 
-# In[123]:
+# In[22]:
 
 
 H2_CO[-1]
 
 
-# In[124]:
+# In[23]:
 
 
 T_out_C[-1]
 
 
-# In[125]:
+# In[24]:
 
 
 t_span = [0, mass_cat]
@@ -436,9 +436,9 @@ T = sol.y[6]
 Pressure = sol.y[7]
 T_out_C = T - 273
 
-X_CH4 = (F_CH4_e - F_CH4)/F_CH4_e
-X_CO2 = (F_CO2_e - F_CO2)/F_CO2_e
-X_H2O = (F_H2O_e - F_H2O)/F_H2O_e
+X_CH4 = (F_CH4_in - F_CH4)/F_CH4_in
+X_CO2 = (F_CO2_in - F_CO2)/F_CO2_in
+X_H2O = (F_H2O_in - F_H2O)/F_H2O_in
 # print(X_CH4, X_CO2, X_H2O)
 
 
@@ -468,11 +468,11 @@ for i in range(len(X_CH4)):
                 Dp, eff_SRM:= 1, eff_WGS:= 1),
                 method = 'BDF'
                )
-    X_CH4_eq.append((F_CH4_e - sol_eq.y[4][-1])/F_CH4_e)
-    X_CO2_eq.append((F_CO2_e - sol_eq.y[1][-1])/F_CO2_e)
-    X_H2O_eq.append((F_H2O_e - sol_eq.y[0][-1])/F_H2O_e)
-    X_C_eq.append(((F_CH4_e + F_CO2_e) - (sol_eq.y[4][-1] + sol_eq.y[1][-1]))/
-        (F_CH4_e + F_CO2_e))
+    X_CH4_eq.append((F_CH4_in - sol_eq.y[4][-1])/F_CH4_in)
+    X_CO2_eq.append((F_CO2_in - sol_eq.y[1][-1])/F_CO2_in)
+    X_H2O_eq.append((F_H2O_in - sol_eq.y[0][-1])/F_H2O_in)
+    X_C_eq.append(((F_CH4_in + F_CO2_in) - (sol_eq.y[4][-1] + sol_eq.y[1][-1]))/
+        (F_CH4_in + F_CO2_in))
 ### end equilibrium calculation
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -480,21 +480,21 @@ plt.grid(which='both')
 plt.ylabel('$X$')
 plt.ylim((-0.25,1.01))
 ax.plot(W_kg, X_CH4, linestyle = 'none')
-ax.set_xlabel('$W_{tube}$ (kg)')
+ax.set_xlabel(r'$W_{\mathrm{tube}}$ (kg)')
 ax2 = ax.twiny()
-ax2.plot(W_T_kg, X_CH4, color = 'red', label = '$X_{CH_4}$')
-ax2.plot(W_T_kg, X_CH4_eq, color = 'red', linestyle = 'dashed', label = '$X_{CH_4, eq}$')
+ax2.plot(W_T_kg, X_CH4, color = 'red', label = r'$X_{\mathrm{CH_4}}$')
+ax2.plot(W_T_kg, X_CH4_eq, color = 'red', linestyle = 'dashed', label = r'$X_{\mathrm{CH_4, eq}}$')
 
-ax2.plot(W_T_kg, X_H2O, color = 'blue', label = '$X_{H_2O}$')
-ax2.plot(W_T_kg, X_H2O_eq, color = 'blue', linestyle = 'dashed', label = '$X_{H_2O, eq}$')
+ax2.plot(W_T_kg, X_H2O, color = 'blue', label = r'$X_{\mathrm{H_2O}}$')
+ax2.plot(W_T_kg, X_H2O_eq, color = 'blue', linestyle = 'dashed', label = r'$X_{\mathrm{H_2O, eq}}$')
 
-ax2.plot(W_T_kg, X_CO2, color = 'green', label = '$X_{CO_2}$')
-ax2.plot(W_T_kg, X_CO2_eq, color = 'green', linestyle = 'dashed', label = '$X_{CO_2, eq}$')
+ax2.plot(W_T_kg, X_CO2, color = 'green', label = r'$X_{\mathrm{CO_2}}$')
+ax2.plot(W_T_kg, X_CO2_eq, color = 'green', linestyle = 'dashed', label = r'$X_{\mathrm{CO_2, eq}}$')
 
-ax2.plot(W_T_kg, X_C, color = 'black', label = '$X_{C}$')
-ax2.plot(W_T_kg, X_C_eq, color = 'black', linestyle = 'dashed', label = '$X_{C, eq}$')
+ax2.plot(W_T_kg, X_C, color = 'black', label = r'$X_{\mathrm{C}}$')
+ax2.plot(W_T_kg, X_C_eq, color = 'black', linestyle = 'dashed', label = r'$X_{\mathrm{C, eq}}$')
 plt.legend(bbox_to_anchor=(1.15, -0.25), ncols = 3)
-ax2.set_xlabel('$W_{total}$ (kg)')
+ax2.set_xlabel(r'$W_{\mathrm{total}}$ (kg)')
 # plt.xlim(0,max(W_kg)*1.3)
 
 fig_name = 'figure_W_vs_X_intrinsic.pdf'
@@ -504,9 +504,9 @@ H2_CO = F_H2/F_CO
 fig, ax = plt.subplots(figsize=(3,2.5))
 plt.plot(W_T_kg, H2_CO, color = 'b')
 # plt.plot(sol.t, H2_CO_eq, color = 'b', linestyle = 'dashed')
-plt.xlabel('$W_{total}$ (kg)')
-plt.ylabel('$H_2/CO$')
-# plt.title('$H_2/CO$')
+plt.xlabel(r'$W_{\mathrm{total}}$ (kg)')
+plt.ylabel(r'$\mathrm{H_2/CO}$')
+# plt.title(r'$\mathrm{H_2/CO}$')
 plt.grid(which='both')
 plt.ylim(0,None)
 fig_name = 'figure_W_vs_H2_CO_intrinsic.pdf'
@@ -516,15 +516,15 @@ fig, axT = plt.subplots(figsize=(3,2.5))
 plt.grid(which='both')
 plt.ylabel('$T$ (ºC)')
 axT.plot(W_kg, T_out_C_extrinsic, linestyle = 'none', label = None)
-axT.set_xlabel('$W_{tube}$ (kg)')
+axT.set_xlabel(r'$W_{\mathrm{tube}}$ (kg)')
 axT2 = axT.twiny()
 axT2.plot(W_T_kg_extrinsic, T_out_C_extrinsic, label = 'Effective Model')
 axT2.plot(W_T_kg, T_out_C, label = 'Intrinsic Model', linestyle = 'dashed')
-axT2.set_xlabel('$W_{total}$ (kg)')
+axT2.set_xlabel(r'$W_{\mathrm{total}}$ (kg)')
 axT2.set_ylabel('$T$ (ºC)')
 
 plt.legend(loc="best")
-# plt.xlabel('$W_{total}$ (kg)')
+# plt.xlabel(r'$W_{\mathrm{total}}$ (kg)')
 # plt.ylabel('$T$ (ºC)')
 # plt.grid(which='both')
 # plt.ylim(640,810)
@@ -533,7 +533,7 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 fig, ax = plt.subplots(figsize=(3,2.5))
 plt.plot(W_T_kg, Pressure)
-plt.xlabel('$W_{total}$ (kg)')
+plt.xlabel(r'$W_{\mathrm{total}}$ (kg)')
 plt.ylabel('$P$ (Pa)')
 plt.grid('both')
 plt.ticklabel_format(useOffset=False)
@@ -543,13 +543,13 @@ fig_name = 'figure_W_vs_P_intrinsic.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[126]:
+# In[25]:
 
 
 z = [4*(W)/(np.pi*((D_our)**2)*bed_packing) for W in W_kg]
 fig, ax = plt.subplots(figsize=(3,2.5))
 plt.plot(W_T_kg, z)
-plt.xlabel('$W_{total}$ (kg)')
+plt.xlabel(r'$W_{\mathrm{total}}$ (kg)')
 plt.ylabel('$z$ (m)')
 plt.grid('both')
 plt.ticklabel_format(useOffset=False)
@@ -610,7 +610,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-# In[34]:
+# In[136]:
 
 
 def reactor_simulation(U_list, T_in_C_list, T_furnace_list, H2O_CH4_list, 
@@ -645,44 +645,44 @@ def reactor_simulation(U_list, T_in_C_list, T_furnace_list, H2O_CH4_list,
                                                     W = W_T/n_tubes # kg
                                                     t_span = [0, W]
                                                     W_range = np.linspace(0, W, num=2000, endpoint=False)
-                                                    F_CH4_e = 0.6*FT0 # mol/s
-                                                    F_CH4_e = F_CH4_e/n_tubes # µmol/s
-                                                    F_H2O_e = F_CH4_e*H2O_CH4
-                                                    F_CO2_e = F_CH4_e/CH4_CO2
-                                                    Y0 = [F_H2O_e, F_CO2_e, F_H2_e, F_N2_e, F_CH4_e, F_CO_e, T_in_C+273, P0]
+                                                    F_CH4_in = 0.6*FT0 # mol/s
+                                                    F_CH4_in = F_CH4_in/n_tubes # µmol/s
+                                                    F_H2O_in = F_CH4_in*H2O_CH4
+                                                    F_CO2_in = F_CH4_in/CH4_CO2
+                                                    Y0 = [F_H2O_in, F_CO2_in, F_H2_e, F_N2_e, F_CH4_in, F_CO_e, T_in_C+273, P0]
                                                     sol = solve_ivp(odes, t_span, Y0, t_eval = W_range,
                                                                     args=(T_a:= T_furnace + 273, D_our/100, # D em m
                                                                     U, Dp/100, eff_SRM, eff_WGS), # Dp em m
                                                                     method = 'BDF'
                                                                    )
                                                     temp_df = pd.DataFrame(np.transpose(sol.y), 
-                                                                                          columns = ('F_H2O_s', 
-                                                                                                     'F_CO2_s', 
-                                                                                                     'F_H2_s', 
-                                                                                                     'F_N2_s', 
-                                                                                                     'F_CH4_s', 
-                                                                                                     'F_CO_s', 
+                                                                                          columns = ('F_H2O', 
+                                                                                                     'F_CO2', 
+                                                                                                     'F_H2', 
+                                                                                                     'F_N2', 
+                                                                                                     'F_CH4', 
+                                                                                                     'F_CO', 
                                                                                                      '$T$ (K)', '$P$ (Pa)'))
-                                                    temp_df['$F_{biogas_0} (mol/s)$'] = FT0
-                                                    temp_df['$\dot{m}_{biogas,in}$ (kg/day)'] = FT0*3600*24*27.2/1000
-                                                    temp_df['$\dot{m}_{C_{12}H_{26}}$ (kg/dia)'] = 0.5*temp_df['F_CO_s']*n_tubes*170*86400/(12*1000)
-                                                    temp_df['$\eta_{SRM}$'] = eff_SRM
-                                                    y_CH4 = temp_df['F_CH4_s']/(
-                                                    temp_df['F_H2O_s'] + temp_df['F_CO2_s'] + temp_df['F_H2_s'] +
-                                                    temp_df['F_N2_s'] + temp_df['F_CH4_s'] + temp_df['F_CO_s']
+                                                    temp_df[r'$F_{\mathrm{biogas_0}}$ (mol/s)'] = FT0
+                                                    temp_df['biogas feed (kg/day)'] = FT0*3600*24*27.2/1000
+                                                    temp_df['$\dot{m}_{C_{12}H_{26}}$ (kg/dia)'] = 0.5*temp_df['F_CO']*n_tubes*170*86400/(12*1000)
+                                                    temp_df[r'$\eta_{\mathrm{SRM}}$'] = eff_SRM
+                                                    y_CH4 = temp_df['F_CH4']/(
+                                                    temp_df['F_H2O'] + temp_df['F_CO2'] + temp_df['F_H2'] +
+                                                    temp_df['F_N2'] + temp_df['F_CH4'] + temp_df['F_CO']
                                                     )
                                                     temp_df['$P_{CH_4}$ (Pa)'] = temp_df['$P$ (Pa)']*y_CH4
-                                                    temp_df['$\eta_{WGS}$'] = eff_WGS
-                                                    temp_df['$U$ ($W m^{-2} K^{-1}$)'] = U
-                                                    temp_df['$T_{in}$ (ºC)'] = T_in_C
+                                                    temp_df[r'$\eta_{\mathrm{WGS}}$'] = eff_WGS
+                                                    temp_df[r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)'] = U
+                                                    temp_df[r'$T_{\mathrm{in}}$ (ºC)'] = T_in_C
                                                     temp_df['$T$ (ºC)'] = temp_df['$T$ (K)'] - 273
-                                                    temp_df['$T_{furnace}$ (ºC)'] = T_furnace
-                                                    temp_df['$W_{tube}$ (kg)'] = sol.t
-                                                    temp_df['$W_{total}$ (kg)'] = sol.t*n_tubes
+                                                    temp_df[r'$T_{\mathrm{furnace}}$ (ºC)'] = T_furnace
+                                                    temp_df[r'$W_{\mathrm{tube}}$ (kg)'] = sol.t
+                                                    temp_df[r'$W_{\mathrm{total}}$ (kg)'] = sol.t*n_tubes
                                                     temp_df['$\Delta T_{max}$ (K)'] = temp_df['$T$ (K)'].max() - temp_df['$T$ (K)'].min()
                                                     temp_df['$T_{min}$ (ºC)'] = temp_df['$T$ (ºC)'].min()
-                                                    temp_df['$H_2O/CH_4$'] = H2O_CH4
-                                                    temp_df['$CH_4/CO_2$'] = CH4_CO2
+                                                    temp_df[r'$\mathrm{H_2O/CH_4}$'] = H2O_CH4
+                                                    temp_df[r'$\mathrm{CH_4/CO_2}$'] = CH4_CO2
                                                     temp_df['$D$ (cm)'] = D_our
                                                     temp_df['$D_p$ (cm)'] = Dp
                                                     temp_df['$D_p$ (mm)'] = Dp*10
@@ -690,16 +690,22 @@ def reactor_simulation(U_list, T_in_C_list, T_furnace_list, H2O_CH4_list,
                                                     temp_df['$\Delta P$ (Pa)'] = temp_df['$P$ (Pa)'].iloc[0] - temp_df['$P$ (Pa)'].iloc[-1]
                                                     temp_df['$n_{tubes}$'] = n_tubes
                                                     temp_df['$z$ (m)'] = 4*(sol.t[-1])/(np.pi*((D_our/100)**2)*bed_packing)
-                                                    temp_df['$H_2/CO$'] = temp_df['F_H2_s']/temp_df['F_CO_s']
-                                                    temp_df['$(H_2/CO)_{out}$'] = temp_df['$H_2/CO$'].iloc[-1]
-                                                    temp_df['$X_{CH_4}$'] = (F_CH4_e - temp_df['F_CH4_s'])/F_CH4_e
-                                                    temp_df['$X_{H_2O}$'] = (F_H2O_e - temp_df['F_H2O_s'])/F_H2O_e
-                                                    temp_df['$X_{CO_2}$'] = (F_CO2_e - temp_df['F_CO2_s'])/F_CO2_e
-                                                    temp_df['$X_{CH_4,out}$'] = temp_df['$X_{CH_4}$'].iloc[-1]
-                                                    temp_df['$X_{H_2O,out}$'] = temp_df['$X_{H_2O}$'].iloc[-1]
-                                                    temp_df['$X_{CO_2,out}$'] = temp_df['$X_{CO_2}$'].iloc[-1]
-                                                    temp_df['$X_C$'] = ((F_CH4_e + F_CO2_e) - (temp_df['F_CH4_s'] + temp_df['F_CO2_s']))/(F_CH4_e + F_CO2_e)
-                                                    temp_df['$X_{C,out}$'] = temp_df['$X_C$'].iloc[-1]
+                                                    temp_df[r'$\mathrm{H_2/CO}$'] = temp_df['F_H2']/temp_df['F_CO']
+                                                    temp_df[r'$\mathrm{(H_2/CO)_{out}}$'] = temp_df[r'$\mathrm{H_2/CO}$'].iloc[-1]
+                                                    temp_df[r'$X_{\mathrm{CH_4}}$'] = (F_CH4_in - temp_df['F_CH4'])/F_CH4_in
+                                                    temp_df[r'$X_{\mathrm{H_2O}}$'] = (F_H2O_in - temp_df['F_H2O'])/F_H2O_in
+                                                    temp_df[r'$X_{\mathrm{CO_2}}$'] = (F_CO2_in - temp_df['F_CO2'])/F_CO2_in
+                                                    temp_df[r'$X_{\mathrm{CH_4,out}}$'] = temp_df[r'$X_{\mathrm{CH_4}}$'].iloc[-1]
+                                                    temp_df[r'$X_{\mathrm{H_2O,out}}$'] = temp_df[r'$X_{\mathrm{H_2O}}$'].iloc[-1]
+                                                    temp_df[r'$X_{\mathrm{CO_2,out}}$'] = temp_df[r'$X_{\mathrm{CO_2}}$'].iloc[-1]
+                                                    temp_df[r'$X_\mathrm{C}$'] = ((F_CH4_in + F_CO2_in) - (temp_df['F_CH4'] + temp_df['F_CO2']))/(F_CH4_in + F_CO2_in)
+                                                    temp_df[r'$X_{\mathrm{C,out}}$'] = temp_df[r'$X_\mathrm{C}$'].iloc[-1]
+                                                    temp_df[r'$Y_\mathrm{H_2}$'] = temp_df['F_H2']/(F_CH4_in - temp_df['F_CH4'])
+                                                    temp_df[r'$Y_\mathrm{CO_2}$'] = (temp_df['F_CO2'] - F_CO2_in)/(F_CH4_in - temp_df['F_CH4'])
+                                                    temp_df[r'$Y_\mathrm{CO}$'] = (temp_df['F_CO'])/(F_CH4_in - temp_df['F_CH4'])
+                                                    temp_df[r'$Y_\mathrm{H_2,~out}$'] = temp_df[r'$Y_\mathrm{H_2}$'].iloc[-1]
+                                                    temp_df[r'$Y_\mathrm{CO_2,~out}$'] = temp_df[r'$Y_\mathrm{CO_2}$'].iloc[-1]
+                                                    temp_df[r'$Y_\mathrm{CO,~out}$'] = temp_df[r'$Y_\mathrm{CO}$'].iloc[-1]
                                                     temp_df['Mears criterion'] = (k_esp (A_SRM, E_SRM, R, temp_df['$T$ (K)'])*temp_df['$P_{CH_4}$ (Pa)']**a*
                                                                                   bed_packing*R*temp_df['$T$ (K)']*(Dp/100)*a
                                                     )/(2*0.273*temp_df['$P_{CH_4}$ (Pa)'])
@@ -726,11 +732,11 @@ mass_cat = 80 # kg
 FT0 = [0.2128] # mol/s
 reactor_df_H2_CO_80kg = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, 
                                            CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$H_2O/CH_4$', y='$(H_2/CO)_{out}$',
+sns.lineplot(x=r'$\mathrm{H_2O/CH_4}$', y=r'$\mathrm{(H_2/CO)_{out}}$',
              data=reactor_df_H2_CO_80kg, ax = ax)
 # 
 fig_name = 'figure_H2O_CH4_vs_H2_CO_80kg.pdf'
-plt.ylabel('$(H_2/CO)_{out}$')
+plt.ylabel(r'$\mathrm{(H_2/CO)_{out}}$')
 plt.xlim(0, None)
 plt.ylim(0, None)
 plt.grid(which='both')
@@ -740,7 +746,7 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 # In[36]:
 
 
-reactor_df_H2_CO_80kg.iloc[(reactor_df_H2_CO_80kg['$(H_2/CO)_{out}$']-2).abs().argsort()[:1]]['$H_2O/CH_4$']
+reactor_df_H2_CO_80kg.iloc[(reactor_df_H2_CO_80kg[r'$\mathrm{(H_2/CO)_{out}}$']-2).abs().argsort()[:1]][r'$\mathrm{H_2O/CH_4}$']
 
 
 # In[37]:
@@ -759,19 +765,19 @@ Dp = [0.4]
 eff_SRM = [0.03]
 mass_cat = 200 # kg
 reactor_df_U = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$W_{tube}$ (kg)', y='$T$ (ºC)', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$W_{\mathrm{tube}}$ (kg)', y='$T$ (ºC)', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)', ax = ax)
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', ax = ax)
 # 
 fig_name = 'figure_W_vs_T_hue_U.pdf'
 plt.grid(which='both')
-plt.legend(title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25), ncols = 3)
+plt.legend(title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25), ncols = 3)
 ax2 = ax.twiny()
-sns.lineplot(x='$W_{total}$ (kg)', y='$T$ (ºC)', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y='$T$ (ºC)', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)', ax = ax2, legend = None, linestyle = None)
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', ax = ax2, legend = None, linestyle = None)
 # plt.title('(a)')
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -791,7 +797,7 @@ P0 = [5.6e5] # Pa
 Dp = [0.4]
 eff_SRM = [0.03]
 reactor_df = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$U$ ($W m^{-2} K^{-1}$)', y='$\Delta T_{max}$ (K)',
+sns.lineplot(x=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', y='$\Delta T_{max}$ (K)',
              data=reactor_df)
 # 
 fig_name = 'figure_U_vs_DTmax.pdf'
@@ -816,16 +822,16 @@ P0 = [5.6e5] # Pa
 Dp = [0.4]
 eff_SRM = [0.03]
 reactor_df_T_in = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$W_{tube}$ (kg)', y='$T$ (ºC)', hue='$T_{in}$ (ºC)', 
+sns.lineplot(x=r'$W_{\mathrm{tube}}$ (kg)', y='$T$ (ºC)', hue=r'$T_{\mathrm{in}}$ (ºC)', 
              data=reactor_df_T_in, 
                 palette = 'bright',
-                style='$T_{in}$ (ºC)', ax = ax)
+                style=r'$T_{\mathrm{in}}$ (ºC)', ax = ax)
 plt.grid(which='both')
 ax2 = ax.twiny()
-sns.lineplot(x='$W_{total}$ (kg)', y='$T$ (ºC)', hue='$T_{in}$ (ºC)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y='$T$ (ºC)', hue=r'$T_{\mathrm{in}}$ (ºC)', 
              data=reactor_df_T_in, 
                 palette = 'bright',
-                style='$T_{in}$ (ºC)', ax = ax2, legend = None, linestyle = None)
+                style=r'$T_{\mathrm{in}}$ (ºC)', ax = ax2, legend = None, linestyle = None)
 ax.set_xlim(0, (200/60)/40)
 ax2.set_xlim(0, (200)/40)
 fig_name = 'figure_W_vs_T_hue_T_in.pdf'
@@ -836,17 +842,17 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 reactor_df_T_in.loc[
-    reactor_df_T_in['$T_{in}$ (ºC)'] == 850]['$T_{min}$ (ºC)']
+    reactor_df_T_in[r'$T_{\mathrm{in}}$ (ºC)'] == 850]['$T_{min}$ (ºC)']
 
 
 # In[41]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{CH_4}$', hue='$T_{in}$ (ºC)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{CH_4}}$', hue=r'$T_{\mathrm{in}}$ (ºC)', 
              data=reactor_df_T_in, 
                 palette = 'bright',
-                style='$T_{in}$ (ºC)')
+                style=r'$T_{\mathrm{in}}$ (ºC)')
 # plt.xlim(0,10)
 plt.ylim(None, 1)
 plt.grid(which='both')
@@ -875,13 +881,13 @@ reactor_df_U_T_in = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$T_{in}$ (ºC)', y='$T_{min}$ (ºC)', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$T_{\mathrm{in}}$ (ºC)', y='$T_{min}$ (ºC)', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U_T_in, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
-plt.legend(ncols = 2, title = '$U$ ($W\ m^{-2}\ K^{-1}$)')
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
+plt.legend(ncols = 2, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_T_in_vs_T_min_hue_U.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -890,29 +896,29 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 reactor_df_U_T_in.loc[
-    reactor_df_U_T_in['$U$ ($W m^{-2} K^{-1}$)'] == 500].loc[
-    reactor_df_U_T_in['$T_{in}$ (ºC)'] == 800]['$T_{min}$ (ºC)']
+    reactor_df_U_T_in[r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)'] == 500].loc[
+    reactor_df_U_T_in[r'$T_{\mathrm{in}}$ (ºC)'] == 800]['$T_{min}$ (ºC)']
 
 
 # In[45]:
 
 
 800 - reactor_df_U_T_in.loc[
-    reactor_df_U_T_in['$U$ ($W m^{-2} K^{-1}$)'] == 121].loc[
-    reactor_df_U_T_in['$T_{in}$ (ºC)'] == 800]['$T_{min}$ (ºC)']
+    reactor_df_U_T_in[r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)'] == 121].loc[
+    reactor_df_U_T_in[r'$T_{\mathrm{in}}$ (ºC)'] == 800]['$T_{min}$ (ºC)']
 
 
 # In[46]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$T_{in}$ (ºC)', y='$\Delta T_{max}$ (K)', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$T_{\mathrm{in}}$ (ºC)', y='$\Delta T_{max}$ (K)', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U_T_in, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
-plt.legend(ncols = 1, title = '$U$ ($W\ m^{-2}\ K^{-1}$)')
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
+plt.legend(ncols = 1, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_T_in_vs_DTmax_hue_U.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -939,11 +945,11 @@ reactor_df_U_T_furnace = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_C
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$T_{furnace}$ (ºC)', y='$\Delta T_{max}$ (K)', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$T_{\mathrm{furnace}}$ (ºC)', y='$\Delta T_{max}$ (K)', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U_T_furnace, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 plt.grid(which='both')
 fig_name = 'figure_Tfurnace_vs_DTmax_hue_U.pdf'
 plt.savefig(fig_name, 
@@ -954,15 +960,15 @@ plt.savefig(fig_name,
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$T_{furnace}$ (ºC)', y='$X_{CH_4,out}$', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$T_{\mathrm{furnace}}$ (ºC)', y=r'$X_{\mathrm{CH_4,out}}$', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U_T_furnace, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 plt.grid(which='both')
 plt.ylabel('$X_{CH_4,saída}$')
 plt.ylim(0, 1)
-plt.xlabel('$T_{furnace}$ (ºC)')
+plt.xlabel(r'$T_{\mathrm{furnace}}$ (ºC)')
 fig_name = 'figure_Tfurnace_vs_X_CH4_hue_U.pdf'
 plt.savefig(fig_name, 
             bbox_inches = 'tight')
@@ -995,20 +1001,20 @@ reactor_df_Tfurnace_U50.columns
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{tube}$ (kg)', y='$T$ (ºC)', hue='$T_{furnace}$ (ºC)', 
+sns.lineplot(x=r'$W_{\mathrm{tube}}$ (kg)', y='$T$ (ºC)', hue=r'$T_{\mathrm{furnace}}$ (ºC)', 
              data=reactor_df_Tfurnace_U50, 
                 palette = 'bright',
-                style='$T_{furnace}$ (ºC)', ax = ax)
+                style=r'$T_{\mathrm{furnace}}$ (ºC)', ax = ax)
 plt.grid(which='both')
 plt.ylim(None, 850)
 plt.xlabel('$W_{tubo}$ (kg)')
 plt.ylabel('$T_{reator}$ (ºC)')
-plt.legend(ncols = 3, title = '$T_{furnace}$ (ºC)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$T_{\mathrm{furnace}}$ (ºC)', bbox_to_anchor=(1.05, -0.25))
 ax2 = ax.twiny()
-sns.lineplot(x='$W_{total}$ (kg)', y='$T$ (ºC)', hue='$T_{furnace}$ (ºC)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y='$T$ (ºC)', hue=r'$T_{\mathrm{furnace}}$ (ºC)', 
              data=reactor_df_Tfurnace_U50, 
                 palette = 'bright',
-                style='$T_{furnace}$ (ºC)', ax = ax2, legend = None, linestyle = None)
+                style=r'$T_{\mathrm{furnace}}$ (ºC)', ax = ax2, legend = None, linestyle = None)
 fig_name = 'figure_W_vs_T_hue_Tfurnace.pdf'
 plt.savefig(fig_name, 
             bbox_inches = 'tight')
@@ -1018,19 +1024,19 @@ plt.savefig(fig_name,
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{tube}$ (kg)', y='$X_{CH_4}$', hue='$T_{furnace}$ (ºC)', 
+sns.lineplot(x=r'$W_{\mathrm{tube}}$ (kg)', y=r'$X_{\mathrm{CH_4}}$', hue=r'$T_{\mathrm{furnace}}$ (ºC)', 
              data=reactor_df_Tfurnace_U50, 
                 palette = 'bright',
-                style='$T_{furnace}$ (ºC)', ax = ax)
+                style=r'$T_{\mathrm{furnace}}$ (ºC)', ax = ax)
 plt.grid(which='both')
 plt.xlabel('$W_{tubo}$ (kg)')
 plt.ylim(0,1)
-plt.legend(ncols = 3, title = '$T_{furnace}$ (ºC)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$T_{\mathrm{furnace}}$ (ºC)', bbox_to_anchor=(1.05, -0.25))
 ax2 = ax.twiny()
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{CH_4}$', hue='$T_{furnace}$ (ºC)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{CH_4}}$', hue=r'$T_{\mathrm{furnace}}$ (ºC)', 
              data=reactor_df_Tfurnace_U50, 
                 palette = 'bright',
-                style='$T_{furnace}$ (ºC)', ax = ax2, legend = None, linestyle = None)
+                style=r'$T_{\mathrm{furnace}}$ (ºC)', ax = ax2, legend = None, linestyle = None)
 fig_name = 'figure_W_vs_X_CH4_hue_Tfurnace.pdf'
 plt.savefig(fig_name, 
             bbox_inches = 'tight')
@@ -1040,13 +1046,13 @@ plt.savefig(fig_name,
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{CH_4}$', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{CH_4}}$', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
 plt.ylim(0,1)
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_W_vs_XCH4_hue_U.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -1055,13 +1061,13 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{H_2O}$', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{H_2O}}$', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
 plt.ylim(0,1)
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_W_vs_XH2O_hue_U.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -1070,13 +1076,13 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{CO_2}$', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{CO_2}}$', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
 plt.ylim(None,1)
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_W_vs_XCO2_hue_U.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -1085,46 +1091,82 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_C$', hue='$U$ ($W m^{-2} K^{-1}$)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_\mathrm{C}$', hue=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', 
              data=reactor_df_U, 
                 palette = 'bright',
-                style='$U$ ($W m^{-2} K^{-1}$)')
+                style=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)')
 plt.ylim(None,1)
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$U$ ($W\ m^{-2}\ K^{-1}$)', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_W_vs_XC_hue_U.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[58]:
+# In[153]:
 
 
-fig, ax = plt.subplots(figsize=(3,2.5))
 U = [121]
 T_in_C = [800]
 T_furnace = [800]
-H2O_CH4 = [0.1, 1.2, 2, 4, 6, 10]
+# H2O_CH4 = [0.1, 1, 2, 4, 6, 10]
+H2O_CH4 = np.linspace(0.1, 10, num = 100)
 CH4_CO2 = [1.5]
 D_our = [4.51] # cm
 n_tubes = [60]
 P0 = [5.6e5] # Pa
 Dp = [0.4]
 eff_SRM = [0.03]
-mass_cat = 200
+mass_cat = 80
 reactor_df_H2O_CH4 = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$W_{tube}$ (kg)', y='$X_C$', hue='$H_2O/CH_4$', 
-             data=reactor_df_H2O_CH4, 
-                palette = 'bright',
-                style='$H_2O/CH_4$', ax = ax)
-plt.ylim(None,1)
+# fig, ax = plt.subplots(figsize=(3,2.5))
+# sns.lineplot(x=r'$W_{\mathrm{tube}}$ (kg)', y=r'$X_\mathrm{C}$', hue=r'$\mathrm{H_2O/CH_4}$', 
+#              data=reactor_df_H2O_CH4, 
+#                 palette = 'bright',
+#                 style=r'$\mathrm{H_2O/CH_4}$', ax = ax)
+# plt.ylim(None,1)
+# plt.grid(which='both')
+# plt.legend(ncols = 3, title = r'$\mathrm{H_2O/CH_4}$', bbox_to_anchor=(1.05, -0.25))
+# ax2 = ax.twiny()
+# sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_\mathrm{C}$', hue=r'$\mathrm{H_2O/CH_4}$', 
+#              data=reactor_df_H2O_CH4, 
+#                 palette = 'bright',
+#                 style=r'$\mathrm{H_2O/CH_4}$', ax = ax2, legend = None, linestyle = None)
+# fig_name = 'figure_W_vs_XC_hue_H2O_CH4.pdf'
+# plt.savefig(fig_name, bbox_inches = 'tight')
+
+
+# In[154]:
+
+
+fig, ax = plt.subplots(figsize=(3,2.5))
+
+sns.lineplot(x=r'$\mathrm{H_2O/CH_4}$', y=r'$X_\mathrm{C}$',
+             data=reactor_df_H2O_CH4, ax = ax)
+plt.ylim(0,1)
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$H_2O/CH_4$', bbox_to_anchor=(1.05, -0.25))
-ax2 = ax.twiny()
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_C$', hue='$H_2O/CH_4$', 
-             data=reactor_df_H2O_CH4, 
-                palette = 'bright',
-                style='$H_2O/CH_4$', ax = ax2, legend = None, linestyle = None)
-fig_name = 'figure_W_vs_XC_hue_H2O_CH4.pdf'
+# plt.legend(ncols = 3, title = r'$\mathrm{H_2O/CH_4}$', bbox_to_anchor=(1.05, -0.25))
+fig_name = 'figure_H2O_CH4_vs_XC.pdf'
+plt.savefig(fig_name, bbox_inches = 'tight')
+
+
+# In[155]:
+
+
+fig, ax = plt.subplots(figsize=(3,2.5))
+
+sns.lineplot(x=r'$\mathrm{H_2O/CH_4}$', y=r'$Y_\mathrm{CO_2,~out}$', 
+             data=reactor_df_H2O_CH4, ax = ax, label = r'$Y_\mathrm{CO_2}$')
+sns.lineplot(x=r'$\mathrm{H_2O/CH_4}$', y=r'$Y_\mathrm{H_2,~out}$', 
+             data=reactor_df_H2O_CH4, ax = ax,  label = r'$Y_\mathrm{H_2}$', linestyle='dashed')
+sns.lineplot(x=r'$\mathrm{H_2O/CH_4}$', y=r'$Y_\mathrm{CO,~out}$', 
+             data=reactor_df_H2O_CH4, ax = ax,  label = r'$Y_\mathrm{CO}$', linestyle='dotted')
+# plt.ylim(None,1)
+plt.grid(which='both')
+plt.ylabel('molar Yield')
+plt.legend(
+    bbox_to_anchor=(0.5, 0.4)
+)
+fig_name = 'figure_H2O_CH4_vs_Y.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
@@ -1144,13 +1186,13 @@ Dp = [0.4]
 eff_SRM = [0.03]
 mass_cat = 200
 reactor_df_CH4_CO2 = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_C$', hue='$CH_4/CO_2$', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_\mathrm{C}$', hue=r'$\mathrm{CH_4/CO_2}$', 
              data=reactor_df_CH4_CO2, 
                 palette = 'bright',
-                style='$CH_4/CO_2$')
+                style=r'$\mathrm{CH_4/CO_2}$')
 plt.ylim(None,1)
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$CH_4/CO_2$', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$\mathrm{CH_4/CO_2}$', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_W_vs_XC_hue_CH4_CO2.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -1159,13 +1201,13 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$H_2/CO$', hue='$H_2O/CH_4$', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$\mathrm{H_2/CO}$', hue=r'$\mathrm{H_2O/CH_4}$', 
              data=reactor_df_H2O_CH4, 
                 palette = 'bright',
-                style='$H_2O/CH_4$')
+                style=r'$\mathrm{H_2O/CH_4}$')
 plt.ylim(0,None)
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$H_2O/CH_4$', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$\mathrm{H_2O/CH_4}$', bbox_to_anchor=(1.05, -0.25))
 fig_name = 'figure_W_vs_H2_CO_hue_H2O_CH4.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -1174,18 +1216,18 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{tube}$ (kg)', y='$H_2/CO$', hue='$CH_4/CO_2$', 
+sns.lineplot(x=r'$W_{\mathrm{tube}}$ (kg)', y=r'$\mathrm{H_2/CO}$', hue=r'$\mathrm{CH_4/CO_2}$', 
              data=reactor_df_CH4_CO2, 
                 palette = 'bright',
-                style='$CH_4/CO_2$', ax = ax)
+                style=r'$\mathrm{CH_4/CO_2}$', ax = ax)
 plt.ylim(0,None)
 plt.grid(which='both')
-plt.legend(ncols = 2, title = '$CH_4/CO_2$')
+plt.legend(ncols = 2, title = r'$\mathrm{CH_4/CO_2}$')
 ax2 = ax.twiny()
-sns.lineplot(x='$W_{total}$ (kg)', y='$H_2/CO$', hue='$CH_4/CO_2$', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$\mathrm{H_2/CO}$', hue=r'$\mathrm{CH_4/CO_2}$', 
              data=reactor_df_CH4_CO2, 
                 palette = 'bright',
-                style='$CH_4/CO_2$', ax = ax2, legend = None, linestyle = None)
+                style=r'$\mathrm{CH_4/CO_2}$', ax = ax2, legend = None, linestyle = None)
 fig_name = 'figure_W_vs_H2_CO_hue_CH4_CO2.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
@@ -1207,7 +1249,7 @@ Dp = [0.4]
 eff_SRM = [0.03]
 mass_cat = 200
 reactor_df_D = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$W_{total}$ (kg)', y='$T$ (ºC)', hue='$D$ (cm)', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y='$T$ (ºC)', hue='$D$ (cm)', 
              data=reactor_df_D, 
                 palette = 'bright',
                 style='$D$ (cm)')
@@ -1330,61 +1372,61 @@ reactor_df_P0_effect = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2
 # In[70]:
 
 
-P_otima = reactor_df_P0_effect['$P_0$ (bar)'].loc[reactor_df_P0_effect['$X_{CH_4,out}$'] == 
-                                        reactor_df_P0_effect['$X_{CH_4,out}$'].max()].mean()
+P_otima = reactor_df_P0_effect['$P_0$ (bar)'].loc[reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'] == 
+                                        reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].max()].mean()
 P_otima
 
 
 # In[71]:
 
 
-reactor_df_P0_effect['$X_{CH_4,out}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 1].mean()
+reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 1].mean()
 
 
 # In[72]:
 
 
-reactor_df_P0_effect['$X_{CH_4,out}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 4].mean()
+reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 4].mean()
 
 
 # In[73]:
 
 
-reactor_df_P0_effect['$X_{CH_4,out}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 6].mean()
+reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 6].mean()
 
 
 # In[74]:
 
 
-reactor_df_P0_effect['$X_{CH_4,out}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 5.6].mean()
+reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 5.6].mean()
 
 
 # In[75]:
 
 
-reactor_df_P0_effect['$X_{CH_4,out}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 10].mean()
+reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 10].mean()
 
 
 # In[76]:
 
 
-reactor_df_P0_effect['$X_{CH_4,out}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 20].mean()
+reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 20].mean()
 
 
 # In[77]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$P_0$ (bar)', y='$X_{CH_4,out}$',
-             data=reactor_df_P0_effect, label = '$X_{CH_4}$', ax = ax)
-sns.lineplot(x='$P_0$ (bar)', y='$X_{H_2O,out}$',
-             data=reactor_df_P0_effect, label = '$X_{H_2O}$', ax = ax, linestyle='dashed')
-sns.lineplot(x='$P_0$ (bar)', y='$X_{CO_2,out}$',
-             data=reactor_df_P0_effect, label = '$X_{CO_2}$', ax = ax, linestyle='dashdot')
+sns.lineplot(x='$P_0$ (bar)', y=r'$X_{\mathrm{CH_4,out}}$',
+             data=reactor_df_P0_effect, label = r'$X_{\mathrm{CH_4}}$', ax = ax)
+sns.lineplot(x='$P_0$ (bar)', y=r'$X_{\mathrm{H_2O,out}}$',
+             data=reactor_df_P0_effect, label = r'$X_{\mathrm{H_2O}}$', ax = ax, linestyle='dashed')
+sns.lineplot(x='$P_0$ (bar)', y=r'$X_{\mathrm{CO_2,out}}$',
+             data=reactor_df_P0_effect, label = r'$X_{\mathrm{CO_2}}$', ax = ax, linestyle='dashdot')
 plt.xlim(0,None)
 plt.ylim(None,1)
 plt.grid(which='both')
-plt.ylabel('$X_{out}$')
+plt.ylabel(r'$X_{\mathrm{out}}$')
 plt.legend(ncols = 3, bbox_to_anchor=(1.05, -0.25))
 plt.ylim(-0.3,1)
 fig_name = 'figure_P0_vs_X_CH4.pdf'
@@ -1421,16 +1463,16 @@ reactor_df_P0_effect_H2_prod = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4,
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$P_0$ (bar)', y='$X_{CH_4,out}$',
-             data=reactor_df_P0_effect_H2_prod, label = '$X_{CH_4}$', ax = ax)
-sns.lineplot(x='$P_0$ (bar)', y='$X_{H_2O,out}$',
-             data=reactor_df_P0_effect_H2_prod, label = '$X_{H_2O}$', ax = ax, linestyle='dashed')
-sns.lineplot(x='$P_0$ (bar)', y='$X_{CO_2,out}$',
-             data=reactor_df_P0_effect_H2_prod, label = '$X_{CO_2}$', ax = ax, linestyle='dashdot')
+sns.lineplot(x='$P_0$ (bar)', y=r'$X_{\mathrm{CH_4,out}}$',
+             data=reactor_df_P0_effect_H2_prod, label = r'$X_{\mathrm{CH_4}}$', ax = ax)
+sns.lineplot(x='$P_0$ (bar)', y=r'$X_{\mathrm{H_2O,out}}$',
+             data=reactor_df_P0_effect_H2_prod, label = r'$X_{\mathrm{H_2O}}$', ax = ax, linestyle='dashed')
+sns.lineplot(x='$P_0$ (bar)', y=r'$X_{\mathrm{CO_2,out}}$',
+             data=reactor_df_P0_effect_H2_prod, label = r'$X_{\mathrm{CO_2}}$', ax = ax, linestyle='dashdot')
 plt.xlim(0,None)
 plt.ylim(None,1)
 plt.grid(which='both')
-plt.ylabel('$X_{out}$')
+plt.ylabel(r'$X_{\mathrm{out}}$')
 plt.legend(ncols = 3, bbox_to_anchor=(1.05, -0.25))
 plt.ylim(-0.3,1)
 fig_name = 'figure_P0_vs_X_CH4_H2_prod.pdf'
@@ -1440,8 +1482,8 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 # In[81]:
 
 
-P_otima_H2_prod = reactor_df_P0_effect_H2_prod['$P_0$ (bar)'].loc[reactor_df_P0_effect_H2_prod['$X_{CH_4,out}$'] == 
-                                        reactor_df_P0_effect_H2_prod['$X_{CH_4,out}$'].max()].mean()
+P_otima_H2_prod = reactor_df_P0_effect_H2_prod['$P_0$ (bar)'].loc[reactor_df_P0_effect_H2_prod[r'$X_{\mathrm{CH_4,out}}$'] == 
+                                        reactor_df_P0_effect_H2_prod[r'$X_{\mathrm{CH_4,out}}$'].max()].mean()
 P_otima_H2_prod
 
 
@@ -1466,7 +1508,7 @@ reactor_df_P0 = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{CH_4}$',
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{CH_4}}$',
              hue='$P_0$ (bar)', 
              palette = 'bright',
              style='$P_0$ (bar)',
@@ -1484,7 +1526,7 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_C$',
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_\mathrm{C}$',
              hue='$P_0$ (bar)', 
              palette = 'bright',
              style='$P_0$ (bar)',
@@ -1499,7 +1541,7 @@ plt.legend(ncols = 2, title = '$P_0$ (bar)')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{CO_2}$',
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{CO_2}}$',
              hue='$P_0$ (bar)', 
              palette = 'bright',
              style='$P_0$ (bar)',
@@ -1513,7 +1555,7 @@ plt.legend(ncols = 2, title = '$P_0$ (bar)')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{H_2O}$',
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{H_2O}}$',
              hue='$P_0$ (bar)', 
              palette = 'bright',
              style='$P_0$ (bar)',
@@ -1546,10 +1588,10 @@ eff_SRM = [0.01, 0.03, 0.05, 0.1, 1]
 eff_WGS = [0.07]
 mass_cat = 80
 reactor_df_eff = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$W_{total}$ (kg)', y='$T$ (ºC)',
-             hue='$\eta_{SRM}$', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y='$T$ (ºC)',
+             hue=r'$\eta_{\mathrm{SRM}}$', 
              palette = 'bright',
-             style='$\eta_{SRM}$',
+             style=r'$\eta_{\mathrm{SRM}}$',
              data=reactor_df_eff)
 
 plt.grid(which='both')
@@ -1563,14 +1605,14 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x='$W_{total}$ (kg)', y='$X_{CH_4}$',
-             hue='$\eta_{SRM}$', 
+sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$X_{\mathrm{CH_4}}$',
+             hue=r'$\eta_{\mathrm{SRM}}$', 
              palette = 'bright',
-             style='$\eta_{SRM}$',
+             style=r'$\eta_{\mathrm{SRM}}$',
              data=reactor_df_eff)
 
 plt.grid(which='both')
-plt.legend(ncols = 3, title = '$\eta_{SRM}$', bbox_to_anchor=(1.05, -0.25))
+plt.legend(ncols = 3, title = r'$\eta_{\mathrm{SRM}}$', bbox_to_anchor=(1.05, -0.25))
 plt.ylim(0,1)
 fig_name = 'figure_W_vs_X_CH4_hue_eta.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
@@ -1592,11 +1634,10 @@ Dp = [0.4]
 eff_SRM = np.arange(0, 0.1, 0.001)
 mass_cat = 80
 reactor_df_eff_X_out = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$\eta_{SRM}$', y='$X_{CH_4,out}$',
+sns.lineplot(x=r'$\eta_{\mathrm{SRM}}$', y=r'$X_{\mathrm{CH_4,out}}$',
              data=reactor_df_eff_X_out)
 
 plt.grid(which='both')
-# plt.xlim(0,0.1)
 
 
 # In[91]:
@@ -1634,15 +1675,15 @@ FT0 = np.arange(0.1*0.2128, 10*0.2128, 0.1*0.2128)
 fig, ax = plt.subplots(figsize=(3,2.5))
 reactor_df_FT0_200kg = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, 
                                            CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$\dot{m}_{biogas,in}$ (kg/day)', y='$X_{CH_4,out}$',
+sns.lineplot(x='biogas feed (kg/day)', y=r'$X_{\mathrm{CH_4,out}}$',
              data=reactor_df_FT0_80kg, ax = ax, label = '80 kg', linestyle = 'dashed')
-sns.lineplot(x='$\dot{m}_{biogas,in}$ (kg/day)', y='$X_{CH_4,out}$',
+sns.lineplot(x='biogas feed (kg/day)', y=r'$X_{\mathrm{CH_4,out}}$',
              data=reactor_df_FT0_200kg, ax = ax, label = '200 kg')
 # 
 fig_name = 'figure_FT0_vs_X_2bar.pdf'
 # plt.ylabel('$(H_2/CO)_{saída}$')
 # plt.xlim(0, None)
-plt.legend(title = '$W_{total}$')
+plt.legend(title = r'$W_{\mathrm{total}}$')
 plt.ylim(0, 1)
 plt.grid(which='both')
 plt.savefig(fig_name, bbox_inches = 'tight')
@@ -1683,15 +1724,15 @@ FT0 = np.arange(0.1*0.2128, 10*0.2128, 0.5*0.2128)
 fig, ax = plt.subplots(figsize=(3,2.5))
 reactor_df_FT0_200kg = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, 
                                            CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$\dot{m}_{biogas,in}$ (kg/day)', y='$X_{CH_4,out}$',
+sns.lineplot(x='biogas feed (kg/day)', y=r'$X_{\mathrm{CH_4,out}}$',
              data=reactor_df_FT0_80kg, ax = ax, label = '80 kg', linestyle = 'dashed')
-sns.lineplot(x='$\dot{m}_{biogas,in}$ (kg/day)', y='$X_{CH_4,out}$',
+sns.lineplot(x='biogas feed (kg/day)', y=r'$X_{\mathrm{CH_4,out}}$',
              data=reactor_df_FT0_200kg, ax = ax, label = '200 kg')
 # 
 fig_name = 'figure_FT0_vs_X_5bar.pdf'
 # plt.ylabel('$(H_2/CO)_{saída}$')
 # plt.xlim(0, None)
-plt.legend(title = '$W_{total}$')
+plt.legend(title = r'$W_{\mathrm{total}}$')
 plt.ylim(0, 1)
 plt.grid(which='both')
 plt.savefig(fig_name, bbox_inches = 'tight')
@@ -1702,8 +1743,8 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 
 biogas_m0 = 3000
 
-df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['$\dot{m}_{biogas,in}$ (kg/day)']-biogas_m0).abs().argsort()[:2]]
-df_sort[['$\dot{m}_{biogas,in}$ (kg/day)', '$X_{CH_4,out}$', '$X_{CO_2,out}$', '$X_{C,out}$']]
+df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
 
 
 # In[94]:
@@ -1711,8 +1752,8 @@ df_sort[['$\dot{m}_{biogas,in}$ (kg/day)', '$X_{CH_4,out}$', '$X_{CO_2,out}$', '
 
 biogas_m0 = 500
 
-df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['$\dot{m}_{biogas,in}$ (kg/day)']-biogas_m0).abs().argsort()[:2]]
-df_sort[['$\dot{m}_{biogas,in}$ (kg/day)', '$X_{CH_4,out}$', '$X_{CO_2,out}$', '$X_{C,out}$']]
+df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
 
 
 # In[95]:
@@ -1720,8 +1761,8 @@ df_sort[['$\dot{m}_{biogas,in}$ (kg/day)', '$X_{CH_4,out}$', '$X_{CO_2,out}$', '
 
 biogas_m0 = 3000
 
-df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['$\dot{m}_{biogas,in}$ (kg/day)']-biogas_m0).abs().argsort()[:2]]
-df_sort[['$\dot{m}_{biogas,in}$ (kg/day)', '$X_{CH_4,out}$', '$X_{CO_2,out}$', '$X_{C,out}$']]
+df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
 
 
 # In[96]:
@@ -1729,8 +1770,8 @@ df_sort[['$\dot{m}_{biogas,in}$ (kg/day)', '$X_{CH_4,out}$', '$X_{CO_2,out}$', '
 
 biogas_m0 = 500
 
-df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['$\dot{m}_{biogas,in}$ (kg/day)']-biogas_m0).abs().argsort()[:2]]
-df_sort[['$\dot{m}_{biogas,in}$ (kg/day)', '$X_{CH_4,out}$', '$X_{CO_2,out}$', '$X_{C,out}$']]
+df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
 
 
 # In[97]:
@@ -1754,11 +1795,11 @@ mass_cat = 2/1000 # kg
 FT0 = [3.2e-4] # mol/s
 
 reactor_df_U_bench = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
-sns.lineplot(x='$U$ ($W m^{-2} K^{-1}$)', y='$X_{CH_4,out}$', hue='$T_{furnace}$ (ºC)', 
+sns.lineplot(x=r'$U~(\mathrm{W~m^{-2}~K^{-1}}$)', y=r'$X_{\mathrm{CH_4,out}}$', hue=r'$T_{\mathrm{furnace}}$ (ºC)', 
              data=reactor_df_U_bench, 
              ax = ax,
              palette = 'bright',
-                style='$T_{furnace}$ (ºC)'
+                style=r'$T_{\mathrm{furnace}}$ (ºC)'
             )
 
 # 
@@ -1772,8 +1813,8 @@ plt.savefig(fig_name, bbox_inches = 'tight')
 # In[98]:
 
 
-cut_off = reactor_df_U_bench.loc[reactor_df_U_bench['$X_{CH_4,out}$'] == 
-                       reactor_df_U_bench['$X_{CH_4,out}$'].iloc[-1]]['$X_{CH_4,out}$'].mean()*0.9
+cut_off = reactor_df_U_bench.loc[reactor_df_U_bench[r'$X_{\mathrm{CH_4,out}}$'] == 
+                       reactor_df_U_bench[r'$X_{\mathrm{CH_4,out}}$'].iloc[-1]][r'$X_{\mathrm{CH_4,out}}$'].mean()*0.9
 cut_off
 
 
@@ -1801,22 +1842,34 @@ reactor_df_Xc_P_H2O_CH4 = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_
 cm = 1/2.54  # centimeters in inches
 fig, ax = plt.subplots(figsize=(5.7*cm,3.8*cm))
 
-sns.lineplot(x='$P_0$ (bar)', y='$X_C$', hue='$H_2O/CH_4$', 
+sns.lineplot(x='$P_0$ (bar)', y=r'$X_\mathrm{C}$', hue=r'$\mathrm{H_2O/CH_4}$', 
              data=reactor_df_Xc_P_H2O_CH4, 
                 palette = 'bright',
-                style='$H_2O/CH_4$', ax = ax)
+                style=r'$\mathrm{H_2O/CH_4}$', ax = ax)
 plt.ylim(0,0.8)
 plt.ylabel('Carbon conversion')
 plt.xlabel('Pressure (bar)')
 plt.grid(which='both')
-plt.legend(ncols = 1, title = '$H_2O/CH_4$', bbox_to_anchor=(1.05, 1.05))
+plt.legend(ncols = 1, title = r'$\mathrm{H_2O/CH_4}$', bbox_to_anchor=(1.05, 1.05))
 # Adding annotation on the plot.
-ax.annotate('$H_2$ rich', xy=(10, 0.3), xytext=(15, 0.05), fontsize=12,
+ax.annotate(r'$\mathrm{H_2}$ rich', xy=(10, 0.3), xytext=(15, 0.05), fontsize=12,
             arrowprops=dict(facecolor='red', shrink=0.05))
 ax.annotate('syngas', xy=(7, 0.6), xytext=(15, 0.55), fontsize=12,
             arrowprops=dict(facecolor='blue', shrink=0.05))
 fig_name = 'figure_P0_vs_Xc_hue_H2O_CH4.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
