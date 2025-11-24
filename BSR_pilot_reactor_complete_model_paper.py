@@ -37,11 +37,11 @@ def cp(A, B, C, D, T):
 
 
 params = [
-          2.80987545e-02, # A_SRM [=] mol/s/kg/Pa**a+b 
-          2.06007753e+05, # E_SRM [=] J/mol
-          8.89015990e-04, # A_WGS [=] mol/s/kg/Pa**2
-          1.29419551e+05, # E_WGS [=] J/mol
-          2.37901228e+00  # a [=] power law exponent, adimentional
+          2.83e-02, # A_SRM [=] mol/s/kg/Pa**a+b 
+          2.06e+05, # E_SRM [=] J/mol
+          9.05e-04, # A_WGS [=] mol/s/kg/Pa**2
+          1.30e+05, # E_WGS [=] J/mol
+          2.38  # a [=] power law exponent, adimentional
 ]
 
 
@@ -610,7 +610,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-# In[136]:
+# In[34]:
 
 
 def reactor_simulation(U_list, T_in_C_list, T_furnace_list, H2O_CH4_list, 
@@ -1102,7 +1102,7 @@ fig_name = 'figure_W_vs_XC_hue_U.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[153]:
+# In[58]:
 
 
 U = [121]
@@ -1135,7 +1135,7 @@ reactor_df_H2O_CH4 = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, 
 # plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[154]:
+# In[59]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1149,7 +1149,7 @@ fig_name = 'figure_H2O_CH4_vs_XC.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[155]:
+# In[60]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1170,7 +1170,7 @@ fig_name = 'figure_H2O_CH4_vs_Y.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[59]:
+# In[61]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1197,22 +1197,18 @@ fig_name = 'figure_W_vs_XC_hue_CH4_CO2.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[60]:
+# fig, ax = plt.subplots(figsize=(3,2.5))
+# sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$\mathrm{H_2/CO}$', hue=r'$\mathrm{H_2O/CH_4}$', 
+#              data=reactor_df_H2O_CH4, 
+#                 palette = 'bright',
+#                 style=r'$\mathrm{H_2O/CH_4}$')
+# plt.ylim(0,None)
+# plt.grid(which='both')
+# plt.legend(ncols = 3, title = r'$\mathrm{H_2O/CH_4}$', bbox_to_anchor=(1.05, -0.25))
+# fig_name = 'figure_W_vs_H2_CO_hue_H2O_CH4.pdf'
+# plt.savefig(fig_name, bbox_inches = 'tight')
 
-
-fig, ax = plt.subplots(figsize=(3,2.5))
-sns.lineplot(x=r'$W_{\mathrm{total}}$ (kg)', y=r'$\mathrm{H_2/CO}$', hue=r'$\mathrm{H_2O/CH_4}$', 
-             data=reactor_df_H2O_CH4, 
-                palette = 'bright',
-                style=r'$\mathrm{H_2O/CH_4}$')
-plt.ylim(0,None)
-plt.grid(which='both')
-plt.legend(ncols = 3, title = r'$\mathrm{H_2O/CH_4}$', bbox_to_anchor=(1.05, -0.25))
-fig_name = 'figure_W_vs_H2_CO_hue_H2O_CH4.pdf'
-plt.savefig(fig_name, bbox_inches = 'tight')
-
-
-# In[61]:
+# In[63]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1232,7 +1228,7 @@ fig_name = 'figure_W_vs_H2_CO_hue_CH4_CO2.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[62]:
+# In[64]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1258,7 +1254,7 @@ fig_name = 'figure_W_vs_T_hue_D.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[63]:
+# In[65]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1281,7 +1277,7 @@ fig_name = 'figure_D_vs_Tmin.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[64]:
+# In[66]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1295,7 +1291,7 @@ fig_name = 'figure_D_vs_DeltaP.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[65]:
+# In[67]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1316,7 +1312,7 @@ sns.lineplot(x='$D_p$ (mm)', y='$\Delta P$ (Pa)',
 plt.grid(which='both')
 
 
-# In[66]:
+# In[68]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1337,7 +1333,7 @@ plt.grid(which='both')
 # plt.yscale('log')
 
 
-# In[67]:
+# In[69]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1346,13 +1342,13 @@ sns.lineplot(x='$n_{tubes}$', y='$z$ (m)',
 plt.grid(which='both')
 
 
-# In[68]:
+# In[70]:
 
 
 reactor_df_Dp.columns
 
 
-# In[69]:
+# In[71]:
 
 
 U = [121]
@@ -1369,7 +1365,7 @@ mass_cat = 80
 reactor_df_P0_effect = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
 
 
-# In[70]:
+# In[72]:
 
 
 P_otima = reactor_df_P0_effect['$P_0$ (bar)'].loc[reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'] == 
@@ -1377,43 +1373,43 @@ P_otima = reactor_df_P0_effect['$P_0$ (bar)'].loc[reactor_df_P0_effect[r'$X_{\ma
 P_otima
 
 
-# In[71]:
+# In[73]:
 
 
 reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 1].mean()
 
 
-# In[72]:
+# In[74]:
 
 
 reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 4].mean()
 
 
-# In[73]:
+# In[75]:
 
 
 reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 6].mean()
 
 
-# In[74]:
+# In[76]:
 
 
 reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 5.6].mean()
 
 
-# In[75]:
+# In[77]:
 
 
 reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 10].mean()
 
 
-# In[76]:
+# In[78]:
 
 
 reactor_df_P0_effect[r'$X_{\mathrm{CH_4,out}}$'].loc[reactor_df_P0_effect['$P_0$ (bar)'] == 20].mean()
 
 
-# In[77]:
+# In[79]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1433,7 +1429,7 @@ fig_name = 'figure_P0_vs_X_CH4.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[78]:
+# In[80]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1442,7 +1438,7 @@ sns.lineplot(x='$P_0$ (bar)', y='$\Delta P$ (Pa)',
 plt.grid(which='both')
 
 
-# In[79]:
+# In[81]:
 
 
 U = [121]
@@ -1459,7 +1455,7 @@ mass_cat = 80
 reactor_df_P0_effect_H2_prod = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
 
 
-# In[80]:
+# In[82]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1479,7 +1475,7 @@ fig_name = 'figure_P0_vs_X_CH4_H2_prod.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[81]:
+# In[83]:
 
 
 P_otima_H2_prod = reactor_df_P0_effect_H2_prod['$P_0$ (bar)'].loc[reactor_df_P0_effect_H2_prod[r'$X_{\mathrm{CH_4,out}}$'] == 
@@ -1487,7 +1483,7 @@ P_otima_H2_prod = reactor_df_P0_effect_H2_prod['$P_0$ (bar)'].loc[reactor_df_P0_
 P_otima_H2_prod
 
 
-# In[82]:
+# In[84]:
 
 
 U = [121]
@@ -1504,7 +1500,7 @@ mass_cat = 80
 reactor_df_P0 = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
 
 
-# In[83]:
+# In[85]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1522,7 +1518,7 @@ fig_name = 'figure_W_vs_X_CH4_P_effect.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[84]:
+# In[86]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1537,7 +1533,7 @@ plt.ylim(None, 1)
 plt.legend(ncols = 2, title = '$P_0$ (bar)')
 
 
-# In[85]:
+# In[87]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1551,7 +1547,7 @@ plt.ylim(None, 1)
 plt.legend(ncols = 2, title = '$P_0$ (bar)')
 
 
-# In[86]:
+# In[88]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1565,13 +1561,13 @@ plt.ylim(None, 1)
 plt.legend(ncols = 2, title = '$P_0$ (bar)')
 
 
-# In[87]:
+# In[89]:
 
 
 reactor_df_P0.columns
 
 
-# In[88]:
+# In[90]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1601,7 +1597,7 @@ fig_name = 'figure_W_vs_T_hue_eta.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[89]:
+# In[91]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1618,7 +1614,7 @@ fig_name = 'figure_W_vs_X_CH4_hue_eta.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[90]:
+# In[92]:
 
 
 fig, ax = plt.subplots(figsize=(3,2.5))
@@ -1640,7 +1636,7 @@ sns.lineplot(x=r'$\eta_{\mathrm{SRM}}$', y=r'$X_{\mathrm{CH_4,out}}$',
 plt.grid(which='both')
 
 
-# In[91]:
+# In[93]:
 
 
 U = [121]
@@ -1689,7 +1685,7 @@ plt.grid(which='both')
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[92]:
+# In[94]:
 
 
 U = [121]
@@ -1738,30 +1734,12 @@ plt.grid(which='both')
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[93]:
-
-
-biogas_m0 = 3000
-
-df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
-df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
-
-
-# In[94]:
-
-
-biogas_m0 = 500
-
-df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
-df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
-
-
 # In[95]:
 
 
 biogas_m0 = 3000
 
-df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
 df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
 
 
@@ -1770,11 +1748,29 @@ df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,
 
 biogas_m0 = 500
 
-df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort = reactor_df_FT0_80kg.iloc[(reactor_df_FT0_80kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
 df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
 
 
 # In[97]:
+
+
+biogas_m0 = 3000
+
+df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
+
+
+# In[98]:
+
+
+biogas_m0 = 500
+
+df_sort = reactor_df_FT0_200kg.iloc[(reactor_df_FT0_200kg['biogas feed (kg/day)']-biogas_m0).abs().argsort()[:2]]
+df_sort[['biogas feed (kg/day)', r'$X_{\mathrm{CH_4,out}}$', r'$X_{\mathrm{CO_2,out}}$', r'$X_{\mathrm{C,out}}$']]
+
+
+# In[99]:
 
 
 # for the i&ECR paper
@@ -1810,7 +1806,7 @@ fig_name = 'figure_U_effect_on_X_bench_scale.pdf'
 plt.savefig(fig_name, bbox_inches = 'tight')
 
 
-# In[98]:
+# In[100]:
 
 
 cut_off = reactor_df_U_bench.loc[reactor_df_U_bench[r'$X_{\mathrm{CH_4,out}}$'] == 
@@ -1818,7 +1814,7 @@ cut_off = reactor_df_U_bench.loc[reactor_df_U_bench[r'$X_{\mathrm{CH_4,out}}$'] 
 cut_off
 
 
-# In[99]:
+# In[101]:
 
 
 U = [121]
@@ -1836,7 +1832,7 @@ FT0 = [0.2128] # mol/s
 reactor_df_Xc_P_H2O_CH4 = reactor_simulation(U, T_in_C, T_furnace, H2O_CH4, CH4_CO2, D_our, n_tubes, P0, Dp, mass_cat, eff_SRM, eff_WGS, FT0)
 
 
-# In[100]:
+# In[102]:
 
 
 cm = 1/2.54  # centimeters in inches
